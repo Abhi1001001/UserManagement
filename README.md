@@ -1,11 +1,11 @@
 I made this project in React library. this is an user management app.<br/>
-<h6>Project Setup:</h6>
+<h4>Project Setup:</h4>
 <ul>
   <li><b>React</b> as framework</li>
   <li><b>Next ui</b> for the design components like the table, form, buttons, and layout.</li>
   <li><b>React router</b> for managing page navigation (between the homepage and the "Add User" form).</li>
 </ul>
-<h6>Componenets in this app:</h6>
+<h4>Componenets in this app:</h4>
 <ul>
   <li><b>Home Component</b></li>
   This page contains a table that displays a list of users and an "Add User" button.<br/>
