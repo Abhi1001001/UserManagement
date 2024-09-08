@@ -1,15 +1,21 @@
-import React from 'react'
 import Home from './Components/Home'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import AddUser from './Components/AddUser'
+import UserDetail from './Components/UserDetail'
+import { useState } from 'react'
 
 export default function App() {
+  const[userId, setUserId]= useState("")
+
+  const sendData = (userId)=>{
+    setUserId(userId);   
+  }
+  
   return (
     <>
     <BrowserRouter>
     <Routes>
-      <Route path='/' element={<Home/>}/>
-      <Route path='/new-user' element={<AddUser/>}/>
+      <Route path='/' element={<Home sendData={sendData} />}/>
+      <Route path={`/id=${userId}`} element={<UserDetail userId={userId} />}/>
     </Routes>
     </BrowserRouter>
     </>
