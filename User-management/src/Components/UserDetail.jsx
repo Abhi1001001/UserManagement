@@ -17,7 +17,7 @@ export default function UserDetail(props) {
   const [user, setUser] = useState({});
 
   // API calling for user detail (get methode)---------->
-  const updateUser = async () => {
+  const getUser = async () => {
     await axios
       .get(`https://jsonplaceholder.typicode.com/users/${props.userId}`)
       .then((response) => {
@@ -30,14 +30,15 @@ export default function UserDetail(props) {
 
   // useEffect hook for initial rendring
   useEffect(() => {
-    updateUser();
+    getUser();
   }, []);
   return (
     <>
-    {/* Table from nextui */}
+      {/* Table from nextui */}
       <Table
         className="max-w-[80vw] md:max-w-[60vw] lg:max-w-[45vw] m-auto "
         hideHeader
+        shadow="lg"
         aria-label="Example static collection table"
       >
         <TableHeader>

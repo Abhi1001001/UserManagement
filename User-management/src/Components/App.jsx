@@ -1,6 +1,6 @@
-import Home from './Components/Home'
+import Home from './Home'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import UserDetail from './Components/UserDetail'
+import UserDetail from './UserDetail'
 import { useState } from 'react'
 
 export default function App() {

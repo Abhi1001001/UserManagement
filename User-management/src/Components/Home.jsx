@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 // imported nextui Table component below ------------->
 // imported popup component from nextui below----->
@@ -22,12 +22,10 @@ import {
   TableRow,
   TableCell,
   User,
-  Chip,
   Tooltip,
 } from "@nextui-org/react";
 import { EditIcon } from "../NextUIComponenets/EditIcon";
 import { DeleteIcon } from "../NextUIComponenets/DeleteIcon";
-import { columns } from "../NextUIComponenets/data";
 import { Spinner } from "@nextui-org/react";
 //imported nextui Table component above ------------->
 
@@ -44,6 +42,12 @@ export default function Home(props) {
     username: "",
     email: "",
     phone: "",
+    address: {
+      street: "",
+      city: "",
+    },
+    company: "",
+    website: "",
   });
 
   //API Calling for get all user (get methode)------->
@@ -59,29 +63,46 @@ export default function Home(props) {
         setloading(false);
       });
   };
-
   //API Calling for add new user (post methode)------------>
   const addUser = async () => {
-    await axios
-      .post("https://jsonplaceholder.typicode.com/users", newUser)
-      .then((response) => {
-        //alert after successfully Add data
-        alert(
-          `
+    if (
+      !isInvalidMail &&
+      !isInvalidName &&
+      !isInvalidUsername &&
+      !isInvalidPhone &&
+      !isInvalidStreet &&
+      !isInvalidCity &&
+      !isInvalidCompany &&
+      !isInvalidWebsite
+    ) {
+      await axios
+        .post("https://jsonplaceholder.typicode.com/users", newUser)
+        .then((response) => {
+          //alert after successfully Add data
+          console.log("response : ", response.data);
+          alert(
+            `
         successfully created with data
         Name : ${response.data.name}
         Username : ${response.data.username}
         Email : ${response.data.email}
         Phone No : ${response.data.phone}
+        Address
+        City : ${response.data.address.city}
+        Street : ${response.data.address.street}
+        Company Name : ${response.data.company}
+        Website : ${response.data.website}
         `
-        );
-      })
-      .catch((error) => {
-        // error handling if error occurred-------------->
-        alert(`${error.message} occurred please try again`);
-      });
+          );
+        })
+        .catch((error) => {
+          // error handling if error occurred-------------->
+          alert(`${error.message} occurred please try again`);
+        });
+    } else {
+      alert("Please enter valid details");
+    }
   };
-
   // API Calling for delete user (delete methode)------->
   const deleteUser = async (userId) => {
     setUserId(userId);
@@ -96,30 +117,44 @@ export default function Home(props) {
         alert(`${error.message} occurred please try again`);
       });
   };
-
   //API Calling for update user (put methode) -------->
   const updateUser = async () => {
-    await axios
-      .put(`https://jsonplaceholder.typicode.com/users/${userId}`, newUser)
-      .then((response) => {
-        //alert on successfully updation--------->
-        alert(
-          `
-        Data Updated successfully
+    if (
+      !isInvalidMail &&
+      !isInvalidName &&
+      !isInvalidUsername &&
+      !isInvalidPhone &&
+      !isInvalidStreet &&
+      !isInvalidCity &&
+      !isInvalidCompany &&
+      !isInvalidWebsite
+    ) {
+      await axios
+        .put(`https://jsonplaceholder.typicode.com/users/${userId}`, newUser)
+        .then((response) => {
+          //alert on successfully updation--------->
+          alert(
+            `
+        Data Updated successfully        
         id : ${response.data.id}
         Name : ${response.data.name}
         Username : ${response.data.username}
         Email : ${response.data.email}
         Phone No : ${response.data.phone}
+        Address
+        City : ${response.data.address.city}
+        Street : ${response.data.address.street}
+        Company Name : ${response.data.company}
+        Website : ${response.data.website}
         `
-        );
-      })
-      .catch((error) => {
-        // error handling if error occurred-------------->
-        alert(`${error.message} occurred please try again`);
-      });
+          );
+        })
+        .catch((error) => {
+          // error handling if error occurred-------------->
+          alert(`${error.message} occurred please try again`);
+        });
+    }
   };
-
   // setting the default value on updation------>
   const getValue = (user) => {
     setUserId(user.id);
@@ -128,58 +163,106 @@ export default function Home(props) {
       username: user.username,
       email: user.email,
       phone: user.phone,
+      address: {
+        street: user.address.street,
+        city: user.address.city,
+      },
+      company: user.company.name,
+      website: user.website,
     });
     setIsOpenUpdate(true);
   };
+
+  //name validation --------------->
+  const validateName = (newUser) => newUser.name.match(/[a-z]{3,}/i);
+  const isInvalidName = useMemo(() => {
+    return validateName(newUser) ? false : true;
+  }, [newUser]);
+  //Username validation --------------->
+  const validateUsername = (newUser) => newUser.username.match(/[a-z]{3,}/i);
+  const isInvalidUsername = useMemo(() => {
+    return validateUsername(newUser) ? false : true;
+  }, [newUser]);
+  //email validation --------------->
+  const validateEmail = (newUser) =>
+    newUser.email.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i);
+  const isInvalidMail = useMemo(() => {
+    return validateEmail(newUser) ? false : true;
+  }, [newUser]);
+  //phone no. validation --------------->
+  const validatePhone = (newUser) => newUser.phone.match(/^[0-9]{10}$/);
+  const isInvalidPhone = useMemo(() => {
+    return validatePhone(newUser) ? false : true;
+  }, [newUser]);
+  //address(street) validation --------------->
+  const validateStreet = (newUser) =>
+    newUser.address.street.match(/[a-z]{1,}/i);
+  const isInvalidStreet = useMemo(() => {
+    return validateStreet(newUser) ? false : true;
+  }, [newUser]);
+  //address(city) validation --------------->
+  const validateCity = (newUser) => newUser.address.city.match(/[a-z]{1,}/i);
+  const isInvalidCity = useMemo(() => {
+    return validateCity(newUser) ? false : true;
+  }, [newUser]);
+  //company validation --------------->
+  const validateCompany = (newUser) => newUser.company.match(/[a-z]{3,}/i);
+  const isInvalidCompany = useMemo(() => {
+    if (newUser.company === "") return false;
+
+    return validateCompany(newUser) ? false : true;
+  }, [newUser]);
+  //website validation --------------->
+  const validateWebsite = (newUser) =>
+    newUser.website.match(/^(http|https):\/\/[^ "]+$/);
+  const isInvalidWebsite = useMemo(() => {
+    if (newUser.website === "") return false;
+
+    return validateWebsite(newUser) ? false : true;
+  }, [newUser]);
 
   // useEffect for frist rendring------------>
   useEffect(() => {
     fetchUsers();
   }, []);
 
-  // nextui Table code  below ---------------->
-  const statusColorMap = {
-    active: "success",
-    paused: "danger",
-    vacation: "warning",
-  };
-
   // nextui popup code  below----------->
   const { onOpenChange } = useDisclosure();
   // nextui popup code  above----------->
 
-  const renderCell = React.useCallback((user, columnKey) => {
+  //Table headers object---------->
+  const columns = [
+    { name: "NAME", uid: "name" },
+    { name: "USERNAME", uid: "username" },
+    { name: "PHONE NO.", uid: "phone" },
+    { name: "ACTIONS", uid: "actions" },
+  ];
+
+  //table header data --------->
+  const renderCell = useCallback((user, columnKey) => {
     const cellValue = user[columnKey];
     switch (columnKey) {
       case "name":
         return (
           <User
-            avatarProps={{ radius: "lg", src: user.avatar }}
+            avatarProps={{ radius: "xl", src: user.avatar }}
             description={user.email}
             name={cellValue}
           >
             {user.email}
           </User>
         );
-      case "role":
+      case "username":
         return (
           <div className="flex flex-col">
             <p className="text-bold text-sm capitalize">{cellValue}</p>
-            <p className="text-bold text-sm capitalize text-default-400">
-              {user.team}
-            </p>
           </div>
         );
-      case "status":
+      case "phone":
         return (
-          <Chip
-            className="capitalize"
-            color={statusColorMap[user.status]}
-            size="sm"
-            variant="flat"
-          >
-            {cellValue}
-          </Chip>
+          <div className="flex flex-col">
+            <p className="text-bold text-sm capitalize">{cellValue}</p>
+          </div>
         );
       case "actions":
         return (
@@ -188,7 +271,7 @@ export default function Home(props) {
               <span
                 onClick={() => {
                   getValue(user);
-                }} /////   Pending..................
+                }}
                 className="capitalize text-lg cursor-pointer active:opacity-50"
               >
                 <EditIcon />
@@ -203,7 +286,9 @@ export default function Home(props) {
               </span>
             </Tooltip>
             <Tooltip color="dark" content="view detail">
-              <Link to={`/id=${user.id}`}>   {/* nevigate to UserDetail page*/}
+              <Link to={`/id=${user.id}`}>
+                {" "}
+                {/* nevigate to UserDetail page*/}
                 <span
                   onClick={() => props.sendData(user.id)}
                   className="text-lg cursor-pointer active:opacity-50"
@@ -243,23 +328,33 @@ export default function Home(props) {
   function getdata(event) {
     let name = event.target.name;
     let value = event.target.value;
-    setNewUser((old) => {
-      return {
-        ...old,
-        [name]: value,
-      };
-    });
+    if (name === "street" || name === "city") {
+      setNewUser((old) => {
+        return {
+          ...old,
+          address: { ...old.address, [name]: value },
+        };
+      });
+    } else {
+      setNewUser((old) => {
+        return {
+          ...old,
+          [name]: value,
+        };
+      });
+    }
   }
 
   return (
     <>
-    {/* Table from nextui */}
-      <Table aria-label="Example table with custom cells">
+      {/* Table from nextui */}
+      <Table aria-label="Example table with custom cells" shadow="lg">
         <TableHeader columns={columns}>
           {(column) => (
             <TableColumn
               key={column.uid}
               align={column.uid === "actions" ? "center" : "start"}
+              className="text-left"
             >
               {column.name}
             </TableColumn>
@@ -294,34 +389,96 @@ export default function Home(props) {
                 Add User
               </ModalHeader>
               <ModalBody>
-                <form className=" space-y-5">
+                <form className=" space-y-2">
                   <Input
                     className="w-full"
                     name="name"
                     onChange={getdata}
                     type="text"
-                    label="Name"
+                    label="Name*"
+                    variant="bordered"
+                    isInvalid={isInvalidName}
+                    color={isInvalidName ? "danger" : "success"}
+                    errorMessage="Please enter a valid name at least 3 character between a-z"
                   />
                   <Input
                     className="w-full"
                     name="username"
                     onChange={getdata}
                     type="text"
-                    label="Username"
+                    label="Username*"
+                    variant="bordered"
+                    isInvalid={isInvalidUsername}
+                    color={isInvalidUsername ? "danger" : "success"}
+                    errorMessage="Please enter a valid Username at least 3 character"
+                    defaultValue={`USER-`}
                   />
                   <Input
                     className="w-full"
                     name="email"
                     onChange={getdata}
                     type="email"
-                    label="Email"
+                    label="Email*"
+                    variant="bordered"
+                    isInvalid={isInvalidMail}
+                    color={isInvalidMail ? "danger" : "success"}
+                    errorMessage="Please enter a valid email"
                   />
                   <Input
                     className="w-full"
                     name="phone"
                     onChange={getdata}
                     type="text"
-                    label="Phone no"
+                    label="Phone no*"
+                    variant="bordered"
+                    isInvalid={isInvalidPhone}
+                    color={isInvalidPhone ? "danger" : "success"}
+                    errorMessage="Please enter a valid phone no."
+                  />
+                  <label>Address</label>
+                  <Input
+                    className="w-full"
+                    name="street"
+                    onChange={getdata}
+                    type="text"
+                    label="Street*"
+                    variant="bordered"
+                    isInvalid={isInvalidStreet}
+                    color={isInvalidStreet ? "danger" : "success"}
+                    errorMessage="Address required."
+                  />
+                  <Input
+                    className="w-full"
+                    name="city"
+                    onChange={getdata}
+                    type="text"
+                    label="City*"
+                    variant="bordered"
+                    isInvalid={isInvalidCity}
+                    color={isInvalidCity ? "danger" : "success"}
+                    errorMessage="Address required."
+                  />
+                  <Input
+                    className="w-full"
+                    name="company"
+                    onChange={getdata}
+                    type="text"
+                    label="Company Name"
+                    variant="bordered"
+                    isInvalid={isInvalidCompany}
+                    color={isInvalidCompany ? "danger" : "success"}
+                    errorMessage="Minimum 3 character required."
+                  />
+                  <Input
+                    className="w-full"
+                    name="website"
+                    onChange={getdata}
+                    type="text"
+                    label="Website"
+                    variant="bordered"
+                    isInvalid={isInvalidWebsite}
+                    color={isInvalidWebsite ? "danger" : "success"}
+                    errorMessage=" must be a valid URL."
                   />
                 </form>
               </ModalBody>
@@ -362,13 +519,17 @@ export default function Home(props) {
                 Update User
               </ModalHeader>
               <ModalBody>
-                <form className=" space-y-5">
+                <form className=" space-y-2">
                   <Input
                     className="w-full"
                     name="name"
                     onChange={getdata}
                     type="text"
                     label="Name"
+                    variant="bordered"
+                    isInvalid={isInvalidName}
+                    color={isInvalidName ? "danger" : "success"}
+                    errorMessage="Please enter a valid name at least 3 character between a-z"
                     value={newUser.name}
                   />
                   <Input
@@ -377,6 +538,10 @@ export default function Home(props) {
                     onChange={getdata}
                     type="text"
                     label="Username"
+                    variant="bordered"
+                    isInvalid={isInvalidUsername}
+                    color={isInvalidUsername ? "danger" : "success"}
+                    errorMessage="Please enter a valid Username at least 3 character"
                     value={newUser.username}
                   />
                   <Input
@@ -385,6 +550,10 @@ export default function Home(props) {
                     onChange={getdata}
                     type="email"
                     label="Email"
+                    variant="bordered"
+                    isInvalid={isInvalidMail}
+                    color={isInvalidMail ? "danger" : "success"}
+                    errorMessage="Please enter a valid email"
                     value={newUser.email}
                   />
                   <Input
@@ -393,7 +562,60 @@ export default function Home(props) {
                     onChange={getdata}
                     type="text"
                     label="Phone no"
+                    variant="bordered"
+                    isInvalid={isInvalidPhone}
+                    color={isInvalidPhone ? "danger" : "success"}
+                    errorMessage="Please enter a valid phone no."
                     value={newUser.phone}
+                  />
+                  <label>Address</label>
+                  <Input
+                    className="w-full"
+                    name="street"
+                    onChange={getdata}
+                    type="text"
+                    label="Street*"
+                    variant="bordered"
+                    isInvalid={isInvalidStreet}
+                    color={isInvalidStreet ? "danger" : "success"}
+                    errorMessage="Address required."
+                    value={newUser.address.street}
+                  />
+                  <Input
+                    className="w-full"
+                    name="city"
+                    onChange={getdata}
+                    type="text"
+                    label="City*"
+                    variant="bordered"
+                    isInvalid={isInvalidCity}
+                    color={isInvalidCity ? "danger" : "success"}
+                    errorMessage="Address required."
+                    value={newUser.address.city}
+                  />
+                  <Input
+                    className="w-full"
+                    name="company"
+                    onChange={getdata}
+                    type="text"
+                    label="Company Name"
+                    variant="bordered"
+                    isInvalid={isInvalidCompany}
+                    color={isInvalidCompany ? "danger" : "success"}
+                    errorMessage="Minimum 3 character required."
+                    value={newUser.company}
+                  />
+                  <Input
+                    className="w-full"
+                    name="website"
+                    onChange={getdata}
+                    type="text"
+                    label="Website"
+                    variant="bordered"
+                    isInvalid={isInvalidWebsite}
+                    color={isInvalidWebsite ? "danger" : "success"}
+                    errorMessage=" must be a valid URL."
+                    value={newUser.website}
                   />
                 </form>
               </ModalBody>
@@ -450,12 +672,14 @@ export default function Home(props) {
       {/* Nextui code above---------------> */}
 
       {/* Add new user nevigation button below---------> */}
-      <button
+      <Button
+        color="primary"
+        variant="ghost"
         onClick={() => setIsOpenAdd(true)}
-        className="bg-blue-600 rounded-md min-w-[10vw] text-white float-right mr-10 p-2"
+        className="rounded-md min-w-[10vw] float-right mr-10 p-2"
       >
         Add New User
-      </button>
+      </Button>
     </>
   );
 }
