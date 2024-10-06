@@ -4,6 +4,7 @@ I made this project in React library. this is an user management app.<br/>
   <li><b>React</b> as framework</li>
   <li><b>Next ui</b> for the design components like the table, form, buttons, and layout.</li>
   <li><b>React router</b> for managing page navigation (between the homepage and the "Add User" form).</li>
+  <li><b>Regular Expression </b> for data validation I used RegEx pattern .</li>
 </ul>
 <h4>Componenets in this app:</h4>
 <ul>
