@@ -50,6 +50,7 @@ export default function Home(props) {
     website: "",
   });
 
+
   //API Calling for get all user (get methode)------->
   const fetchUsers = async () => {
     await axios
@@ -63,6 +64,7 @@ export default function Home(props) {
         setloading(false);
       });
   };
+
   //API Calling for add new user (post methode)------------>
   const addUser = async () => {
     if (
@@ -103,6 +105,7 @@ export default function Home(props) {
       alert("Please enter valid details");
     }
   };
+
   // API Calling for delete user (delete methode)------->
   const deleteUser = async (userId) => {
     setUserId(userId);
@@ -117,6 +120,7 @@ export default function Home(props) {
         alert(`${error.message} occurred please try again`);
       });
   };
+
   //API Calling for update user (put methode) -------->
   const updateUser = async () => {
     if (
@@ -155,56 +159,46 @@ export default function Home(props) {
         });
     }
   };
-  // setting the default value on updation------>
-  const getValue = (user) => {
-    setUserId(user.id);
-    setNewUser({
-      name: user.name,
-      username: user.username,
-      email: user.email,
-      phone: user.phone,
-      address: {
-        street: user.address.street,
-        city: user.address.city,
-      },
-      company: user.company.name,
-      website: user.website,
-    });
-    setIsOpenUpdate(true);
-  };
 
+  
   //name validation --------------->
   const validateName = (newUser) => newUser.name.match(/[a-z]{3,}/i);
   const isInvalidName = useMemo(() => {
     return validateName(newUser) ? false : true;
   }, [newUser]);
+
   //Username validation --------------->
   const validateUsername = (newUser) => newUser.username.match(/[a-z]{3,}/i);
   const isInvalidUsername = useMemo(() => {
     return validateUsername(newUser) ? false : true;
   }, [newUser]);
+
   //email validation --------------->
   const validateEmail = (newUser) =>
     newUser.email.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}$/i);
   const isInvalidMail = useMemo(() => {
     return validateEmail(newUser) ? false : true;
   }, [newUser]);
+
   //phone no. validation --------------->
   const validatePhone = (newUser) => newUser.phone.match(/^[0-9]{10}$/);
   const isInvalidPhone = useMemo(() => {
     return validatePhone(newUser) ? false : true;
   }, [newUser]);
+
   //address(street) validation --------------->
   const validateStreet = (newUser) =>
     newUser.address.street.match(/[a-z]{1,}/i);
   const isInvalidStreet = useMemo(() => {
     return validateStreet(newUser) ? false : true;
   }, [newUser]);
+
   //address(city) validation --------------->
   const validateCity = (newUser) => newUser.address.city.match(/[a-z]{1,}/i);
   const isInvalidCity = useMemo(() => {
     return validateCity(newUser) ? false : true;
   }, [newUser]);
+
   //company validation --------------->
   const validateCompany = (newUser) => newUser.company.match(/[a-z]{3,}/i);
   const isInvalidCompany = useMemo(() => {
@@ -212,6 +206,7 @@ export default function Home(props) {
 
     return validateCompany(newUser) ? false : true;
   }, [newUser]);
+
   //website validation --------------->
   const validateWebsite = (newUser) =>
     newUser.website.match(/^(http|https):\/\/[^ "]+$/);
@@ -221,14 +216,17 @@ export default function Home(props) {
     return validateWebsite(newUser) ? false : true;
   }, [newUser]);
 
+
   // useEffect for frist rendring------------>
   useEffect(() => {
     fetchUsers();
   }, []);
 
+
   // nextui popup code  below----------->
   const { onOpenChange } = useDisclosure();
   // nextui popup code  above----------->
+
 
   //Table headers object---------->
   const columns = [
@@ -237,6 +235,7 @@ export default function Home(props) {
     { name: "PHONE NO.", uid: "phone" },
     { name: "ACTIONS", uid: "actions" },
   ];
+
 
   //table header data --------->
   const renderCell = useCallback((user, columnKey) => {
@@ -313,6 +312,7 @@ export default function Home(props) {
     }
   }, []);
 
+  
   //spinner from nextui --------->
   if (loading) {
     return (
@@ -323,6 +323,24 @@ export default function Home(props) {
       />
     );
   }
+
+  // setting the default value on updation------>
+  const getValue = (user) => {
+    setUserId(user.id);
+    setNewUser({
+      name: user.name,
+      username: user.username,
+      email: user.email,
+      phone: user.phone,
+      address: {
+        street: user.address.street,
+        city: user.address.city,
+      },
+      company: user.company.name,
+      website: user.website,
+    });
+    setIsOpenUpdate(true);
+  };
 
   // getting data from Add user form---------->
   function getdata(event) {

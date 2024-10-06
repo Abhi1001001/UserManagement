@@ -32,6 +32,7 @@ export default function UserDetail(props) {
   useEffect(() => {
     getUser();
   }, []);
+  
   return (
     <>
       {/* Table from nextui */}
